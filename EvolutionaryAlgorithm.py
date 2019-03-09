@@ -29,8 +29,8 @@ class EvolutionaryAlgorithm():
     RESULTADO_ESPERADO  = (3, 4, 6, 2, 3, 3, 6, 8)
 
     TAMANHO_CROMOSSOMO  = 8
-    TAMANHO_POPULACAO   = 10
-    MAXIMO_GERACOES     = 10000
+    TAMANHO_POPULACAO   = 100
+    MAXIMO_GERACOES     = 1000
     TAXA_CROSSOVER      = 0.5
     TAXA_MUTACAO        = 0.03
 
