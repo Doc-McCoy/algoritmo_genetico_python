@@ -20,6 +20,9 @@ class Individuo():
     
     def get_fitness(self):
         return self.fitness
+    
+    def altera_cromossomo(self, index, novo_valor):
+        self.cromossomos[index] = novo_valor
 
 class EvolutionaryAlgorithm():
 
@@ -27,9 +30,9 @@ class EvolutionaryAlgorithm():
 
     TAMANHO_CROMOSSOMO  = 8
     TAMANHO_POPULACAO   = 10
-    MAXIMO_GERACOES     = 100
+    MAXIMO_GERACOES     = 10000
     TAXA_CROSSOVER      = 0.5
-    TAXA_MUTACAO        = 0.01
+    TAXA_MUTACAO        = 0.03
 
     geracao             = 0
 
@@ -89,17 +92,16 @@ class EvolutionaryAlgorithm():
 
     def crossover(self, pais):
         ''' Realiza o crossover dos cromossomos dos pais, gerando
-        assim 2 filhos com as características de ambos.
-        Tipo assim:
-            0000|0000 => 00001111
-            1111|1111 => 11110000
-        '''
+        assim 2 filhos com as características de ambos. '''
 
-        pai, mae = pais
-        metade_do_cromossomo = int(self.TAMANHO_CROMOSSOMO / 2)
+        pai, mae            = pais
+        cromossomos_filho_x = []
+        cromossomos_filho_y = []
 
-        cromossomos_filho_x = pai.cromossomos[: metade_do_cromossomo] + mae.cromossomos[metade_do_cromossomo :]
-        cromossomos_filho_y = mae.cromossomos[: metade_do_cromossomo] + pai.cromossomos[metade_do_cromossomo :]
+        for index in range(self.TAMANHO_CROMOSSOMO):
+            valor_aleatorio = random.random()
+            cromossomos_filho_x.append(mae.cromossomos[index]) if valor_aleatorio < self.TAXA_CROSSOVER else cromossomos_filho_x.append(pai.cromossomos[index])
+            cromossomos_filho_y.append(mae.cromossomos[index]) if valor_aleatorio < self.TAXA_CROSSOVER else cromossomos_filho_y.append(pai.cromossomos[index])
 
         filho_x = Individuo(cromossomos_filho_x)
         filho_y = Individuo(cromossomos_filho_y)
@@ -117,9 +119,9 @@ class EvolutionaryAlgorithm():
         valor_aleatorio = random.random()
 
         if valor_aleatorio < self.TAXA_MUTACAO:
-            cromossomo_escolhido = random.randint(0, self.TAMANHO_CROMOSSOMO)
+            cromossomo_escolhido = random.randint(0, self.TAMANHO_CROMOSSOMO - 1)
             novo_valor = random.randint(0, 9)
-            individuo.cromossomos[cromossomo_escolhido] = novo_valor
+            individuo.altera_cromossomo(cromossomo_escolhido, novo_valor)
 
 
 
@@ -133,14 +135,17 @@ if __name__ == '__main__':
     while EvAlg.geracao < EvAlg.MAXIMO_GERACOES:
         nova_populacao = []
         print("rodando geracao " + str(EvAlg.geracao))
+
         while len(nova_populacao) < EvAlg.TAMANHO_POPULACAO:
             pais    = EvAlg.selecao(populacao)
             filhos  = EvAlg.crossover(pais)
+
             nova_populacao.append(filhos[0])
             nova_populacao.append(filhos[1])
 
         populacao = nova_populacao
         EvAlg.validarFitness(populacao)
+        EvAlg.incrementar_geracao()
 
     print("Final do processo. A populacao atual é a seguinte")
     for i in populacao:
