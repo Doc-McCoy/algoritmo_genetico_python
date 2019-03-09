@@ -137,12 +137,17 @@ if __name__ == '__main__':
     pp          = PrettyPrinter(indent=4)
     EvAlg       = EvolutionaryAlgorithm()
 
+    print("Sequencia de números que o algoritmo vai tentar descobrir:")
+    print(EvAlg.RESULTADO_ESPERADO)
     populacao   = EvAlg.criarPopulacao()
+    print("Geração inicial gerada aleatoriamente:")
+    for i in populacao:
+        print(i)
     EvAlg.validarFitness(populacao)
+    print("Trabalhando....\n")
 
     while EvAlg.geracao < EvAlg.MAXIMO_GERACOES:
         nova_populacao = []
-        print("rodando geracao " + str(EvAlg.geracao))
 
         while len(nova_populacao) < EvAlg.TAMANHO_POPULACAO:
             pais    = EvAlg.selecao(populacao)
