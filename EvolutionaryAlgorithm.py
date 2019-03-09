@@ -100,8 +100,16 @@ class EvolutionaryAlgorithm():
 
         for index in range(self.TAMANHO_CROMOSSOMO):
             valor_aleatorio = random.random()
-            cromossomos_filho_x.append(mae.cromossomos[index]) if valor_aleatorio < self.TAXA_CROSSOVER else cromossomos_filho_x.append(pai.cromossomos[index])
-            cromossomos_filho_y.append(mae.cromossomos[index]) if valor_aleatorio < self.TAXA_CROSSOVER else cromossomos_filho_y.append(pai.cromossomos[index])
+            if valor_aleatorio < self.TAXA_CROSSOVER:
+                cromossomos_filho_x.append(mae.cromossomos[index])
+            else:
+                cromossomos_filho_x.append(pai.cromossomos[index])
+
+            valor_aleatorio = random.random()
+            if valor_aleatorio < self.TAXA_CROSSOVER:
+                cromossomos_filho_y.append(mae.cromossomos[index])
+            else:
+                cromossomos_filho_y.append(pai.cromossomos[index])
 
         filho_x = Individuo(cromossomos_filho_x)
         filho_y = Individuo(cromossomos_filho_y)
