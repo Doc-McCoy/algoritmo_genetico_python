@@ -33,6 +33,9 @@ class EvolutionaryAlgorithm():
 
     geracao             = 0
 
+    def incrementar_geracao(self):
+        self.geracao += 1
+    
     def criarPopulacao(self):
         ''' Cria a população randomica inicial, com n
         indivíduos de acordo com o TAMANHO_POPULACAO. '''
@@ -51,17 +54,19 @@ class EvolutionaryAlgorithm():
         return self.populacao
 
 
-    def validarFitness(self, individuo):
+    def validarFitness(self, populacao):
         ''' Testa uma população e retorna quantos pontos ela fez,
         baseado na comparação dos valores de seus elementos com a
         lista RESULTADO_ESPERADO. '''
 
         esperado    = self.RESULTADO_ESPERADO
-        cromossomos = individuo.cromossomos
 
-        acertos = [i for i, j in zip(esperado, cromossomos) if i == j]
-        quantidade_de_acertos = len(acertos)
-        individuo.set_fitness(quantidade_de_acertos)
+        for individuo in populacao:
+            cromossomos = individuo.cromossomos
+
+            acertos = [i for i, j in zip(esperado, cromossomos) if i == j]
+            quantidade_de_acertos = len(acertos)
+            individuo.set_fitness(quantidade_de_acertos)
 
 
     def selecao(self, populacao):
@@ -84,26 +89,59 @@ class EvolutionaryAlgorithm():
 
     def crossover(self, pais):
         ''' Realiza o crossover dos cromossomos dos pais, gerando
-        assim 2 filhos com as características de ambos. '''
+        assim 2 filhos com as características de ambos.
+        Tipo assim:
+            0000|0000 => 00001111
+            1111|1111 => 11110000
+        '''
 
-        pai_a, pai_b = pais
+        pai, mae = pais
         metade_do_cromossomo = int(self.TAMANHO_CROMOSSOMO / 2)
 
-        cromossomos_iniciais_pai_a  = pai_a.cromossomos[ : metade_do_cromossomo]
-        cromossomos_finais_pai_a    = pai_a.cromossomos[metade_do_cromossomo : ]
+        cromossomos_filho_x = pai.cromossomos[: metade_do_cromossomo] + mae.cromossomos[metade_do_cromossomo :]
+        cromossomos_filho_y = mae.cromossomos[: metade_do_cromossomo] + pai.cromossomos[metade_do_cromossomo :]
 
-        
+        filho_x = Individuo(cromossomos_filho_x)
+        filho_y = Individuo(cromossomos_filho_y)
 
-    def mutacao(self):
-        pass
+        self.mutacao(filho_x)
+        self.mutacao(filho_y)
+
+        return [filho_x, filho_y]
+
+
+    def mutacao(self, individuo):
+        ''' Realiza mutações nos cromossomos de um individuo,
+        de acordo com a TAXA_MUTACAO. '''
+
+        valor_aleatorio = random.random()
+
+        if valor_aleatorio < self.TAXA_MUTACAO:
+            cromossomo_escolhido = random.randint(0, self.TAMANHO_CROMOSSOMO)
+            novo_valor = random.randint(0, 9)
+            individuo.cromossomos[cromossomo_escolhido] = novo_valor
 
 
 
-pp = PrettyPrinter(indent=4)
+if __name__ == '__main__':
+    pp          = PrettyPrinter(indent=4)
+    EvAlg       = EvolutionaryAlgorithm()
 
-EvAlg       = EvolutionaryAlgorithm()
-populacao   = EvAlg.criarPopulacao()
-for individuo in populacao:
-    EvAlg.validarFitness(individuo)
-selecionados = EvAlg.selecao(populacao)
-filhos = EvAlg.crossover(selecionados)
+    populacao   = EvAlg.criarPopulacao()
+    EvAlg.validarFitness(populacao)
+
+    while EvAlg.geracao < EvAlg.MAXIMO_GERACOES:
+        nova_populacao = []
+        print("rodando geracao " + str(EvAlg.geracao))
+        while len(nova_populacao) < EvAlg.TAMANHO_POPULACAO:
+            pais    = EvAlg.selecao(populacao)
+            filhos  = EvAlg.crossover(pais)
+            nova_populacao.append(filhos[0])
+            nova_populacao.append(filhos[1])
+
+        populacao = nova_populacao
+        EvAlg.validarFitness(populacao)
+
+    print("Final do processo. A populacao atual é a seguinte")
+    for i in populacao:
+        print(i.cromossomos)
