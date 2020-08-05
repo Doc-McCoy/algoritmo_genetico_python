@@ -7,7 +7,7 @@
     Este algoritmo usa os seguintes operadores:
     - Operador de seleção: Seleciona os indivíduos com melhores fitness.
     - Operador de crossover: Mistura os cromossomos de 2 indivíduos para criar um novo.
-    - Operaodr de mutação: Aleatoriamente altera um ou dois cromossomos para manter a diversidade.
+    - Operador de mutação: Aleatoriamente altera um ou dois cromossomos para manter a diversidade.
 '''
 
 geneSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!.'
